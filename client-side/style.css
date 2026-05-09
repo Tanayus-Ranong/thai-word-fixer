@@ -5,9 +5,9 @@
 }
 
 :root {
-  --bg-1: #fff1f2;
-  --bg-2: #fef2f2;
-  --bg-3: #fff7ed;
+  --bg-1: #ffedd5;
+  --bg-2: #ffe4e6;
+  --bg-3: #fce7f3;
   --surface: #ffffff;
   --surface-alt: #fffbfb;
   --border: #e5e7eb;
@@ -16,13 +16,13 @@
   --text-soft: #44403c;
   --muted: #78716c;
   --muted-light: #a8a29e;
-  --primary: #dc2626;
-  --primary-hover: #b91c1c;
-  --primary-grad: linear-gradient(135deg, #f43f5e 0%, #ef4444 50%, #dc2626 100%);
-  --primary-grad-hover: linear-gradient(135deg, #e11d48 0%, #dc2626 50%, #b91c1c 100%);
-  --primary-soft: #fef2f2;
-  --primary-soft-2: #fee2e2;
-  --primary-border-soft: #fecaca;
+  --primary: #e11d48;
+  --primary-hover: #be123c;
+  --primary-grad: linear-gradient(135deg, #fb923c 0%, #ef4444 45%, #ec4899 100%);
+  --primary-grad-hover: linear-gradient(135deg, #ea580c 0%, #dc2626 45%, #db2777 100%);
+  --primary-soft: #fff5f5;
+  --primary-soft-2: #ffe4e6;
+  --primary-border-soft: #fecdd3;
   --success: #059669;
   --success-bg: #ecfdf5;
   --success-border: #a7f3d0;
@@ -79,7 +79,7 @@ header {
   background: var(--primary-grad);
   border-radius: 20px;
   margin-bottom: 1.25rem;
-  box-shadow: 0 12px 32px rgba(220, 38, 38, 0.32), 0 4px 8px rgba(220, 38, 38, 0.14);
+  box-shadow: 0 12px 32px rgba(236, 72, 153, 0.28), 0 4px 8px rgba(249, 115, 22, 0.16);
   transform: rotate(-4deg);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -99,7 +99,7 @@ header h1 {
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #1c1917 0%, #dc2626 100%);
+  background: linear-gradient(135deg, #1c1917 0%, #f97316 35%, #ef4444 65%, #ec4899 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -415,7 +415,7 @@ code {
   transition: all 0.2s ease;
   text-decoration: none;
   font-family: inherit;
-  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.28), 0 2px 4px rgba(220, 38, 38, 0.12);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.26), 0 2px 4px rgba(236, 72, 153, 0.12);
   position: relative;
   overflow: hidden;
 }
@@ -431,7 +431,7 @@ code {
 
 .primary-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.36), 0 4px 8px rgba(220, 38, 38, 0.16);
+  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.34), 0 4px 8px rgba(249, 115, 22, 0.18);
 }
 
 .primary-btn:hover:not(:disabled)::after {
