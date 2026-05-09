@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+package-lock.json
+package.json
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude Code session data
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build / temp
+dist/
+build/
+*.log
+tmp/
+temp/
+
+# Skill bundle artifacts (binary, not source)
+*.skill
+thai-word-docs.zip
+
+# Test artifacts
+test_input.docx
+test_output.docx
+_debug_*.xml

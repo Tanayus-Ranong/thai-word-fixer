@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thai Word Fixer — แก้ปัญหาเอกสาร Word ภาษาไทย</title>
+  <meta name="description" content="แก้ปัญหาฟอนต์เพี้ยน ตัดบรรทัดผิด ตัวอักษรยืด เส้นใต้แดง ในไฟล์ Word ภาษาไทย ประมวลผลในเบราว์เซอร์ ไฟล์ไม่ออกจากเครื่อง" />
+  <meta name="theme-color" content="#dc2626" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23f43f5e'/%3E%3Cstop offset='100%25' stop-color='%23b91c1c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Ctext x='50' y='68' font-family='Sarabun,sans-serif' font-size='52' font-weight='800' text-anchor='middle' fill='white'%3Eท%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="hero-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <path d="M9 13h6M9 17h6M9 9h1"/>
+        </svg>
+      </div>
+      <h1>Thai Word Fixer</h1>
+      <p class="subtitle">แก้ปัญหาฟอนต์เพี้ยน · ตัดบรรทัดผิด · ตัวอักษรยืด · เส้นใต้แดง ในไฟล์ <code>.docx</code></p>
+      <span class="badge">ประมวลผลในเบราว์เซอร์ · ไฟล์ไม่ขึ้น server</span>
+    </header>
+
+    <main>
+      <section class="card">
+        <form id="upload-form">
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="file-input" name="file" accept=".docx" hidden />
+            <div class="dropzone-content">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <p class="dropzone-title">ลากไฟล์ <code>.docx</code> มาวางที่นี่</p>
+              <p class="dropzone-sub">หรือ <button type="button" id="browse-btn" class="link-btn">เลือกไฟล์จากเครื่อง</button></p>
+              <p class="dropzone-hint">รองรับไฟล์ขนาดไม่เกิน ~50 MB</p>
+            </div>
+            <div class="dropzone-selected" id="dropzone-selected" hidden>
+              <span id="file-name"></span>
+              <button type="button" id="clear-file" class="link-btn">เปลี่ยนไฟล์</button>
+            </div>
+          </div>
+
+          <details class="options">
+            <summary>ตัวเลือกการประมวลผล</summary>
+            <div class="options-grid">
+              <label class="option">
+                <input type="checkbox" name="injectCs" checked />
+                <div>
+                  <strong>ใส่ Complex Script flag <code>&lt;w:cs/&gt;</code></strong>
+                  <span>ทำให้ Word ตัดบรรทัดที่ขอบเขตคำไทยถูกต้อง</span>
+                </div>
+              </label>
+              <label class="option">
+                <input type="checkbox" name="forceFont" checked />
+                <div>
+                  <strong>บังคับฟอนต์ TH Sarabun New (4 slot)</strong>
+                  <span>ตั้ง ascii / hAnsi / cs / eastAsia ให้ครบ</span>
+                </div>
+              </label>
+              <label class="option">
+                <input type="checkbox" name="forceLang" checked />
+                <div>
+                  <strong>ตั้ง Language tag เป็น th-TH (3 ค่า)</strong>
+                  <span>val / eastAsia / bidi — ปิดเส้นใต้สีแดงที่ผิดภาษา</span>
+                </div>
+              </label>
+              <label class="option">
+                <input type="checkbox" name="convertJustify" checked />
+                <div>
+                  <strong>แปลง Justify → thaiDistribute</strong>
+                  <span>กระจายช่องว่างระหว่างคำสำหรับย่อหน้าภาษาไทย</span>
+                </div>
+              </label>
+              <label class="option">
+                <input type="checkbox" name="noProof" />
+                <div>
+                  <strong>ปิด spell-check ทั้งหมด <code>&lt;w:noProof/&gt;</code></strong>
+                  <span>ลบเส้นใต้สีแดงทั้งหมดในเอกสาร</span>
+                </div>
+              </label>
+            </div>
+          </details>
+
+          <button type="submit" id="submit-btn" class="primary-btn" disabled>
+            <span class="btn-text">ประมวลผลและดาวน์โหลด</span>
+            <span class="spinner" hidden></span>
+          </button>
+        </form>
+      </section>
+
+      <section class="card result-card" id="result-card" hidden>
+        <h2>ประมวลผลสำเร็จ</h2>
+        <div class="stats" id="stats"></div>
+        <button type="button" id="download-btn" class="primary-btn">ดาวน์โหลดอีกครั้ง</button>
+      </section>
+
+      <section class="card error-card" id="error-card" hidden>
+        <h2>เกิดข้อผิดพลาด</h2>
+        <p id="error-message"></p>
+        <button type="button" id="retry-btn" class="primary-btn">ลองใหม่</button>
+      </section>
+
+      <section class="info">
+        <h3>มาตรฐาน 6 ข้อที่ระบบจัดการให้</h3>
+        <ol>
+          <li><strong>ฟอนต์ TH Sarabun New ครบ 4 slot</strong> — ascii / hAnsi / cs / eastAsia</li>
+          <li><strong>Language tag ครบ 3 ค่า</strong> — val=th-TH / eastAsia=th-TH / bidi=th-TH</li>
+          <li><strong>Complex Script flag <code>&lt;w:cs/&gt;</code></strong> — ใส่ในทุก run ที่มีตัวอักษรไทย</li>
+          <li><strong>แยก run ตามภาษา</strong> — run ที่ผสมไทย+อังกฤษถูกแยกออกตาม script</li>
+          <li><strong>Alignment thaiDistribute</strong> — แปลง Justify เป็น thaiDistribute สำหรับย่อหน้าภาษาไทย</li>
+          <li><strong>noProof (เลือกใช้)</strong> — ปิดเส้นใต้สีแดง spell-check</li>
+        </ol>
+      </section>
+    </main>
+
+    <footer>
+      <p class="privacy-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <polyline points="9 12 11 14 15 10"/>
+        </svg>
+        ประมวลผลในเบราว์เซอร์ของคุณเอง · ไฟล์ไม่ถูกอัปโหลดที่ใด
+      </p>
+      <p class="credit">
+        Copyright © 2026 <strong>Tanayus Phitjayanont</strong>. <strong>Krumis.app™</strong> All rights reserved.
+      </p>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="thai-processor.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

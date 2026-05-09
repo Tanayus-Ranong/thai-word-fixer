@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thai Word Fixer — แก้ปัญหาเอกสาร Word ภาษาไทย</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Thai Word Fixer</h1>
+      <p class="subtitle">แก้ปัญหาฟอนต์เพี้ยน · ตัดบรรทัดผิด · ตัวอักษรยืด · เส้นใต้แดง ในเอกสาร <code>.docx</code></p>
+    </header>
+
+    <main>
+      <section class="card">
+        <form id="upload-form">
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="file-input" name="file" accept=".docx" hidden />
+            <div class="dropzone-content">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+              </svg>
+              <p class="dropzone-title">ลากไฟล์ <code>.docx</code> มาวางที่นี่</p>
+              <p class="dropzone-sub">หรือ <button type="button" id="browse-btn" class="link-btn">เลือกไฟล์</button></p>
+              <p class="dropzone-hint">ขนาดไฟล์สูงสุด 25 MB</p>
+            </div>
+            <div class="dropzone-selected" id="dropzone-selected" hidden>
+              <span id="file-name"></span>
+              <button type="button" id="clear-file" class="link-btn">เปลี่ยนไฟล์</button>
+            </div>
+          </div>
+
+          <details class="options">
+            <summary>ตัวเลือกการประมวลผล</summary>
+            <div class="options-grid">
+              <label class="option">
+                <input type="checkbox" name="inject_cs" checked />
+                <div>
+                  <strong>ใส่ Complex Script flag <code>&lt;w:cs/&gt;</code></strong>
+                  <span>ทำให้ Word ตัดบรรทัดที่ขอบเขตคำไทยถูกต้อง</span>
+                </div>
+              </label>
+              <label class="option">
+                <input type="checkbox" name="force_font" checked />
+                <div>
+                  <strong>บังคับฟอนต์ TH Sarabun New (4 slot)</strong>
+                  <span>ตั้ง ascii / hAnsi / cs / eastAsia ให้ครบ</span>
+                </div>
+              </label>
+              <label class="option">
+                <input type="checkbox" name="force_lang" checked />
+                <div>
+                  <strong>ตั้ง Language tag เป็น th-TH (3 ค่า)</strong>
+                  <span>val / eastAsia / bidi — ปิดเส้นใต้สีแดง spell-check ที่ผิดภาษา</span>
+                </div>
+              </label>
+              <label class="option">
+                <input type="checkbox" name="convert_justify" checked />
+                <div>
+                  <strong>แปลง Justify → thaiDistribute</strong>
+                  <span>กระจายช่องว่างระหว่างคำสำหรับย่อหน้าภาษาไทย</span>
+                </div>
+              </label>
+              <label class="option">
+                <input type="checkbox" name="no_proof" />
+                <div>
+                  <strong>ปิด spell-check ทั้งหมด <code>&lt;w:noProof/&gt;</code></strong>
+                  <span>ลบเส้นใต้สีแดงทั้งหมดในเอกสาร</span>
+                </div>
+              </label>
+            </div>
+          </details>
+
+          <button type="submit" id="submit-btn" class="primary-btn" disabled>
+            <span class="btn-text">ประมวลผลและดาวน์โหลด</span>
+            <span class="spinner" hidden></span>
+          </button>
+        </form>
+      </section>
+
+      <section class="card result-card" id="result-card" hidden>
+        <h2>ประมวลผลสำเร็จ</h2>
+        <div class="stats" id="stats"></div>
+        <a id="download-link" class="primary-btn" href="#" download>ดาวน์โหลดไฟล์</a>
+      </section>
+
+      <section class="card error-card" id="error-card" hidden>
+        <h2>เกิดข้อผิดพลาด</h2>
+        <p id="error-message"></p>
+        <button type="button" id="retry-btn" class="primary-btn">ลองใหม่</button>
+      </section>
+
+      <section class="info">
+        <h3>มาตรฐาน 6 ข้อที่ระบบจัดการให้</h3>
+        <ol>
+          <li><strong>ฟอนต์ TH Sarabun New ครบ 4 slot</strong> — ascii / hAnsi / cs / eastAsia</li>
+          <li><strong>Language tag ครบ 3 ค่า</strong> — val=th-TH / eastAsia=th-TH / bidi=th-TH</li>
+          <li><strong>Complex Script flag <code>&lt;w:cs/&gt;</code></strong> — ใส่ในทุก run ที่มีตัวอักษรไทย</li>
+          <li><strong>แยก run ตามภาษา</strong> — run ที่ผสมไทย+อังกฤษถูกแยกออกตาม script</li>
+          <li><strong>Alignment thaiDistribute</strong> — แปลง Justify เป็น thaiDistribute สำหรับย่อหน้าภาษาไทย</li>
+          <li><strong>noProof (เลือกใช้)</strong> — ปิดเส้นใต้สีแดง spell-check</li>
+        </ol>
+      </section>
+    </main>
+
+    <footer>
+      <p>ประมวลผลในเครื่องของคุณเอง · ไฟล์ไม่ถูกเก็บไว้บนเซิร์ฟเวอร์</p>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
